@@ -33,7 +33,7 @@ async function seed() {
 
     await client.query(`
       INSERT INTO flash_sales (name, start_time, end_time, is_active) 
-      VALUES ('Summer Flash Sale', $1, $2, true)
+      VALUES ('Flash Sale', $1, $2, true)
       ON CONFLICT DO NOTHING;
     `, [now, tomorrow]);
 
@@ -47,8 +47,6 @@ async function seed() {
       SELECT $1, id, 
         CASE 
           WHEN name = 'Smartphone X' THEN 20
-          WHEN name = 'Smartwatch Pro' THEN 15
-          WHEN name = 'Fitness Tracker' THEN 25
           ELSE 10
         END, 1
       FROM products 

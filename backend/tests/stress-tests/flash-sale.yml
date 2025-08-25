@@ -1,0 +1,102 @@
+config:
+  target: "http://localhost:3001"
+  phases:
+    - duration: 10
+      arrivalRate: 5
+      rampTo: 50
+      name: "Warm up phase"
+    - duration: 30
+      arrivalRate: 50
+      name: "High load phase"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+
+scenarios:
+  - name: "Flash Sale Purchase Simulation"
+    weight: 1
+    flow:
+      # Step 1: Login as a user
+      - post:
+          url: "/auth/login"
+          json:
+            username: "{{ $randomString(5) }}"  # This will be a random string, will fail auth
+            password: "wrongpassword"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            statusCode: 401
+
+      # Step 2: Login with valid user
+      - post:
+          url: "/auth/login"
+          json:
+            username: "{{ $randomItem(['user1', 'user2']) }}"
+            password: "Satu123"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            statusCode: 200
+
+      # Step 3: Get flash sale status
+      - get:
+          url: "/flash-sales/status"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          capture:
+            - json: "$.flash_sale.id"
+              as: "flashSaleId"
+            - json: "$.status"
+              as: "flashSaleStatus"
+          expect:
+            statusCode: 200
+
+      # Step 4: Get all products
+      - get:
+          url: "/products"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          capture:
+            - json: "$[?(@.is_flash==true)].id"
+              as: "flashProductIds"
+          expect:
+            statusCode: 200
+      
+      # Step 5: Attempt to purchase a flash sale product
+      - function: "selectProduct"
+      - post:
+          url: "/purchases"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            product_id: "{{ selectedProductId }}"
+            flash_sale_id: "{{ flashSaleId }}"
+            quantity: 1
+          expect:
+            - statusCode: [200, 400]  # Either success or out of stock/already purchased
+      
+      # Step 6: Verify user's purchase history
+      - get:
+          url: "/purchases/my-purchases"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            statusCode: 200
+
+functions:
+  # Function to select a random flash sale product
+  selectProduct:
+    function: (context, ee, next) => {
+      if (context.vars.flashProductIds && context.vars.flashProductIds.length > 0) {
+        // Select a random product from flash sale products
+        const randomIndex = Math.floor(Math.random() * context.vars.flashProductIds.length);
+        context.vars.selectedProductId = context.vars.flashProductIds[randomIndex];
+      } else {
+        // Fallback to a default product id
+        context.vars.selectedProductId = 1;
+      }
+      return next();
+    }

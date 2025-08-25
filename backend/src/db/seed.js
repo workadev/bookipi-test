@@ -22,16 +22,7 @@ async function seed() {
     await client.query(`
       INSERT INTO products (name, description, price, quantity, is_active, is_flash) 
       VALUES 
-        ('Smartphone X', 'Latest model with advanced features', 899.99, 50, true, true),
-        ('Wireless Earbuds', 'Premium sound quality with noise cancellation', 159.99, 100, true, false),
-        ('Smartwatch Pro', 'Health tracking and notifications', 299.99, 30, true, true),
-        ('Laptop Ultra', 'Powerful laptop for professionals', 1299.99, 20, true, false),
-        ('Gaming Console', 'Next-gen gaming experience', 499.99, 15, true, false),
-        ('Bluetooth Speaker', 'Portable speaker with rich bass', 79.99, 80, true, false),
-        ('Fitness Tracker', 'Track your steps and health metrics', 89.99, 60, true, true),
-        ('Digital Camera', 'High-resolution photography', 599.99, 25, true, false),
-        ('Wireless Charger', 'Fast charging for compatible devices', 39.99, 120, true, false),
-        ('Smart Home Hub', 'Control your smart home devices', 129.99, 40, true, false)
+        ('Smartphone X', 'Latest model with advanced features', 899.99, 50, true, true)
       ON CONFLICT DO NOTHING;
     `);
 
@@ -76,7 +67,7 @@ async function seed() {
   }
 }
 
-// Run seed if this file is executed directly
+// Direct execution
 if (require.main === module) {
   seed().catch(console.error);
 }

@@ -47,7 +47,6 @@ async function seed() {
       SELECT $1, id, 
         CASE 
           WHEN name = 'Smartphone X' THEN 20
-          ELSE 10
         END, 1
       FROM products 
       WHERE is_flash = true

@@ -1,4 +1,4 @@
-# BookiPi E-commerce Flash Sale Platform
+# Bookipi E-commerce Flash Sale Platform
 
 This is an e-commerce platform with flash sale functionality designed to handle high traffic and concurrent purchases.
 
@@ -7,9 +7,9 @@ This is an e-commerce platform with flash sale functionality designed to handle 
 The system is built with a microservices-based architecture to ensure scalability and fault tolerance:
 
 ```
-┌─────────────────────┐     ┌─────────────────────┐
+┌─────────────────────┐      ┌─────────────────────┐
 │   Frontend (Next.js)│◄────►│  API Gateway Layer  │
-└─────────────────────┘     └──────────┬──────────┘
+└─────────────────────┘      └────────┬────────────┘
                                       │
        ┌───────────────┬──────────────┼──────────────┬───────────────┐
        ▼               ▼              ▼              ▼               ▼
@@ -17,8 +17,8 @@ The system is built with a microservices-based architecture to ensure scalabilit
 │ Auth Service│  │Product   │  │Flash Sale  │  │User      │  │Purchase    │
 │             │  │Service   │  │Service     │  │Service   │  │Service     │
 └─────┬───────┘  └────┬─────┘  └─────┬──────┘  └────┬─────┘  └──────┬─────┘
-      │               │              │               │              │
-      └───────────────┴──────────────┼───────────────┴──────────────┘
+      │               │              │              │               │
+      └───────────────┴──────────────┼──────────────┴───────────────┘
                                      ▼
                             ┌──────────────────┐
                             │  Database Layer  │
@@ -28,11 +28,11 @@ The system is built with a microservices-based architecture to ensure scalabilit
 
 ### Key Design Choices & Trade-offs
 
-1. **Database Transactions & Locking**: We use database-level transactions with row-level locking to prevent overselling and ensure data consistency. This approach is simpler and more reliable than distributed locking for our scale.
+1. **Database Transactions & Locking**: Database-level transactions with row-level locking to prevent overselling and ensure data consistency. This approach is simpler and more reliable than distributed locking for app scale.
 
 2. **Flash Sale Validation**: All flash sale validation (timing, eligibility, etc.) happens on the backend to prevent client-side tampering.
 
-3. **Authentication & Authorization**: We use JWT for authentication and role-based access control for authorization.
+3. **Authentication & Authorization**: JWT for authentication and role-based access control for authorization.
 
 4. **User Experience**: The frontend provides real-time feedback about flash sale status and purchase outcomes.
 
